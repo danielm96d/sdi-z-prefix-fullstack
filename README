@@ -1,1 +1,10 @@
 Inventory Management Application: aka the IM BUSY app
+
+Current Issues: 
+- running the docker-compose doesn't create the database for some reason. 
+  - solution: I manually created the database after running the docker compose to continue to work on CRUD functionality
+- Passwords (not real) are currently unencrypted and authentication is currently non-existant
+  - solution: none yet
+- Database password and username currently visible in the docker-compose.yaml
+  - solution: need to import variables from the .env, however implementation has not been achieved
+- API currently allows for duplicate users/usernames
