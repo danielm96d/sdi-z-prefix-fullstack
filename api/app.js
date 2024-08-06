@@ -16,6 +16,9 @@ app.get("/", (req, res)=>{
   res.send(`application running using NODE_ENV: ${process.env.NODE_ENV}`);//this line will need editing for deployment
 })
 
+
+//==========================================ITEMS CRUD FUNCITONALITY===================================\\
+
 //==================get a list of all inventories====================\\
 app.get("/inventory", async (req, res)=>{
   try {
@@ -39,6 +42,63 @@ app.get("/inventory/:id", async (req, res)=>{
   }
 })
 
+//==================Create an ITEM====================\\
+app.post("/inventory", async (req, res)=>{
+  const {userID, name, description, quantity} = req.body
+  // console.log(itemData)
+  if(!userID || !name || !description || !quantity)
+    res.status(400).send('empty field in post request detected please send an appropriate request')
+  try {
+    await knex("items").insert({userID, name, description, quantity})
+    return res.json('item successfuly created')
+  } catch (error) {
+    console.log(error)
+    res.status(500).send(error.json())
+  }
+})
+
+//==================Delete a ITEM====================\\
+app.delete("/inventory/:id", async (req, res)=>{
+  const {id} = req.params
+  if(!id)
+    res.status(400).send('empty id field request detected please send an appropriate request')
+  try {
+    const deleteItem = await knex("items").where({ id: id }).del()
+    if (deleteItem === 0) {
+      return res.status(404).json({ error: "item not found" });
+    } else {
+      return res.status(202).json("item successfully removed");
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).send(error.json())
+  }
+})
+
+//==================Update a User====================\\
+app.patch("/inventory/:id", async (req, res)=>{
+  const {id} = req.params
+  const {userID, description, name, quantity} = req.body
+  console.log(userID, description, name, quantity)
+  if(!userID || !name || !description || !quantity)
+    res.status(400).send({ERROR: 'please enter an update for each field'})
+  try {
+    const updateItem= await knex("items")
+      .where({ id: id })
+      .update({userID, description, name, quantity})
+    if (updateItem === 0) {
+      return res.status(404).json({ error: "item not found" });
+    } else {
+      return res.status(202).json("item Information Updated");
+    }
+  } catch (error) {
+    console.log(error)
+    res.status(500).send(error.json())
+  }
+})
+
+
+//==========================================USERS CRUD FUNCITONALITY===================================\\
 //==================Retrieve all the user information====================\\
 app.get("/users", async (req, res)=>{
   try {
