@@ -18,17 +18,34 @@ export default function Login(){
       </label>
       <label>
         password:
-        <input onClick={(e)=>{
+        <input onChange={(e)=>{
           setPassword(e.target.value);
           // console.log(userName)
         }}/>
       </label>
       <button onClick={()=>{
-        fetch(`http://localhost:8080/users/${userName}`)
-        .then(res=>res.json())
-        .then(data=>{
-          console.log(data)
-        })
+        if(!userName || !password){
+          console.log('empty fields are invalid')
+          return 
+        }
+        try {
+          fetch(`http://localhost:8080/users/?username=${userName}`)
+          .then(res=>res.json())
+          .then(data=>{
+            let userData = data[0];
+            if(password=== userData.password){
+              console.log(`Successful login as ${userName}`);
+              localStorage.setItem('user',userName);
+              localStorage.setItem('userID',userData.id);
+              navigate('/user-details')
+            }
+            else{
+              console.log('error incorrect password')
+            }
+          })
+        } catch (error) {
+          console.log('invalid username')
+        }
       }}>Login</button>
     </>
     

@@ -8,3 +8,31 @@ Current Issues:
 - Database password and username currently visible in the docker-compose.yaml
   - solution: need to import variables from the .env, however implementation has not been achieved
 - API currently allows for duplicate users/usernames
+
+API GUIDE:
+Endpoints: 
+  - /inventory
+  - /users
+    - Options:
+      - ?username=* (replace the * with the username) returns an entry that has a matching username;
+        ex: `http://localhost:8080/users/?username=fireball` returns:
+        [
+            {
+                "id": 1,
+                "firstName": "Dan",
+                "lastName": "Miller",
+                "userName": "fireball",
+                "password": "1111"
+            }
+        ]
+      - ?id=* (replace the * with the id) returns an entry that has a matching id;
+        - ex: `http://localhost:8080/users/?username=1` returns:
+          [
+              {
+                  "id": 1,
+                  "firstName": "Dan",
+                  "lastName": "Miller",
+                  "userName": "fireball",
+                  "password": "1111"
+              }
+          ]
