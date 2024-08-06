@@ -24,6 +24,19 @@ services:
         source: ./api
         target: /app/api
 
+  client:
+    container_name: client
+    build:
+      context: ./client
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+      - db
+    volumes:
+      - type: bind
+        source: ./client
+        target: /app/client
 volumes:
   inventory_management_db-data:
   # no additional options for this volume are necessary as of now
