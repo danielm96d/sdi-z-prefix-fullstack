@@ -1,5 +1,9 @@
 Inventory Management Application: aka the IM BUSY app
 
+SETUP:
+- make sure to manually setup the database through the terminal if problems arrise on startup
+- be sure to manually load up the test data as well. (knex migrations and seeds)
+
 Current Issues: 
 - running the docker-compose doesn't create the database for some reason. 
   - solution: I manually created the database after running the docker compose to continue to work on CRUD functionality
