@@ -38,5 +38,5 @@ services:
         source: ./client
         target: /app/client
 volumes:
-  inventory_management_db-data:
+  db-data:
   # no additional options for this volume are necessary as of now
