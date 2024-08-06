@@ -6,11 +6,11 @@ services:
       # working on being able to import these from the .env file to hide them.
       - POSTGREST_USER=postgres
       - POSTGRES_PASSWORD=docker
-      - POSTGREST_DB=inventory_management_db
+      - POSTGREST_DB=db
     ports:
       - "5432:5432"
     volumes:
-      - inventory_management_db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql/data
   api:
     container_name: api
     build: 

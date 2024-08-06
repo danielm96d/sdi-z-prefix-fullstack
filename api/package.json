@@ -4,6 +4,7 @@
   "main": "app.js",
   "scripts": {
     "start": "nodemon app.js",
+    "knex-reload": "knex migrate:rollback && knex migrate:latest && knex seed:run",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
