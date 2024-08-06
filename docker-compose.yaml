@@ -1,0 +1,17 @@
+services:
+  db:
+    container_name: pg-docker
+    image: postgres:latest
+    environment:
+      # working on being able to import these from the .env file to hide them.
+      - POSTGREST_USER=postgres
+      - POSTGRES_PASSWORD=docker
+      - POSTGREST_DB=inventory_management_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - inventory_management_db-data:/var/lib/postgresql/data
+
+volumes:
+  inventory_management_db-data:
+  # no additional options for this volume are necessary as of now
