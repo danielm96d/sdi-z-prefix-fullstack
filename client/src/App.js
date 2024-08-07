@@ -6,6 +6,7 @@ import ItemDetails from './modules/ItemDetails.js';
 import Inventory from './modules/Inventory.js';
 import UserPage from './modules/UserPage.js';
 import AuthProvider from './AuthProvider.js';
+import CreateAccount from './modules/CreateAccount.js';
 
 function App() {
   return (
@@ -17,6 +18,8 @@ function App() {
           <Route path="/inventory/itemDetails" element={<ItemDetails/>}/>
           <Route path="/inventory" element={<Inventory/>}/>
           <Route path="/user-details" element={<UserPage/>}/>
+          <Route path="/item-details" element={<ItemDetails/>}/>
+          <Route path="/CreateAccount" element={<CreateAccount/>}/>
         </Routes>
       </Router>
     </AuthProvider>

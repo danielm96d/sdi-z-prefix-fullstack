@@ -18,7 +18,10 @@ export default function Inventory(){
   return(
     <>
       <h1>Inventory Page</h1>
-      <button onClick={()=>{navigate("/Login")}}>LOGIN</button>
+      <button onClick={()=>{
+        if(localStorage.getItem('user'))navigate("/user-details")
+        else navigate("/Login")
+      }}>LOGIN</button>
       <button onClick={()=>{navigate("/user-details")}}>Usser Details</button>
       {
         invList.map((item)=>{

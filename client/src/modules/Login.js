@@ -8,13 +8,18 @@ export default function Login(){
   return(
     <>
       <h1>Login Page</h1>
+      <button onClick={()=>{
+        localStorage.setItem('user','');
+        localStorage.setItem('userID','');
+        navigate('/inventory')
+      }}>Logout</button>
       <button onClick={()=>{navigate('/inventory')}}>inventory</button>
       <label>
         username:
         <input onChange={(e)=>{
           setUserName(e.target.value);
           // console.log(userName)
-        }} />
+        }}/>
       </label>
       <label>
         password:
@@ -47,6 +52,9 @@ export default function Login(){
           console.log('invalid username')
         }
       }}>Login</button>
+      <button onClick={()=>{
+        navigate('/CreateAccount')
+      }}>Register</button>
     </>
     
   )

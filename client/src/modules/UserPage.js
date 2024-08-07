@@ -19,11 +19,21 @@ export default function UserPage(){
     return(<h1>You Must be logged in to access this page</h1>)
   return(
     <>
+      <button onClick={()=>{
+          localStorage.setItem('user','');
+          localStorage.setItem('userID','');
+          navigate('/inventory')
+        }}>Logout</button>
       <button onClick={()=>{navigate("/inventory")}}>inventory</button>
       <h1>{currentUser}'s Inventory</h1>
       {
         invList.map(item=>{
-          return <li key={item.id}>{item.name}</li>
+          return (
+            <>
+              <li key={item.id}>{item.name}</li>
+              <button onClick={()=>{navigate("/item-details", {state: {id: item.id}})}}>view more</button>
+            </>
+          )
         })
       }
     </>
