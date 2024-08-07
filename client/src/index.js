@@ -3,10 +3,15 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { PrimeReactProvider } from 'primereact/api';
+import 'primereact/resources/themes/bootstrap4-dark-blue/theme.css';
+
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <App />
+  <PrimeReactProvider>
+    <App />
+  </PrimeReactProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -18,27 +18,40 @@ app.get("/", (req, res)=>{
 
 
 //==========================================ITEMS CRUD FUNCITONALITY===================================\\
-
-//==================get a list of all inventories====================\\
-app.get("/inventory", async (req, res)=>{
-  try {
-    const adminInventory = await knex("items")
-    .select('*');
-    return res.json(adminInventory)
-  } catch (error) {
-    res.status(500).send('unable to retrieve admin inventory list')
-  }
-})
-
 //==================get a list of a specific user's inventory====================\\
-app.get("/inventory/:id", async (req, res)=>{
-  const {id} = req.params;
-  try {
-    const inventory = await knex("items")
-    .select('*').where({userID: id})
-    return res.json(inventory)
-  } catch (error) {
-    res.status(500).send('unable to retrieve admin inventory list')
+app.get("/inventory*", async (req, res)=>{
+  // const {id} = req.params;
+  const {id, userID} = req.query
+  if((!id && !userID) && Object.keys(req.query).length !== 0){
+    return res.status(500).json(`invalid request with query key(s): ${Object.keys(req.query)}`)
+  }
+  if(id){
+    console.log(`query get started with id: ${id}`)
+    try {
+      const inventory = await knex("items")
+      .select('*').where({id: id})
+      return res.json(inventory)
+    } catch (error) {
+      return res.status(500).json(error)
+    }
+  }
+  else if(userID){
+    try {
+      const inventory = await knex("items")
+      .select('*').where({userID: userID})
+      return res.json(inventory)
+    } catch (error) {
+      return res.status(500).json(error)
+    }
+  }
+  else{
+    try {
+      const adminInventory = await knex("items")
+      .select('*');
+      return res.json(adminInventory)
+    } catch (error) {
+      res.status(500).send('unable to retrieve admin inventory list')
+    }
   }
 })
 
@@ -75,7 +88,7 @@ app.delete("/inventory/:id", async (req, res)=>{
   }
 })
 
-//==================Update a User====================\\
+//==================Update a Item====================\\
 app.patch("/inventory/:id", async (req, res)=>{
   const {id} = req.params
   const {userID, description, name, quantity} = req.body
@@ -99,13 +112,13 @@ app.patch("/inventory/:id", async (req, res)=>{
 
 //==========================================USERS CRUD FUNCITONALITY===================================\\
 //==================Retrieve a single users' information====================\\
-app.get("/users/*", async (req, res)=>{
+app.get("/users*", async (req, res)=>{
   // const {id} = req.params;
   const {id, username} = req.query
-  if(!id && !username){
-    res.status(500).send('you must pass in a query for this route list')
+  if((!id && !username) && Object.keys(req.query).length !== 0){
+    return res.status(500).json(`invalid request with query key(s): ${Object.keys(req.query)}`)
   }
-  if(!username){
+  if(id){
     try {
       const usersList = await knex("users")
       .select('*').where({id: id});
@@ -116,7 +129,7 @@ app.get("/users/*", async (req, res)=>{
       return res.status(500).json(error)
     }
   }
-  else{
+  else if(username){
     try {
       const usersList = await knex("users")
       .select('*').where({userName: username});
@@ -127,15 +140,14 @@ app.get("/users/*", async (req, res)=>{
       return res.status(500).json(error)
     }
   }
-})
-//==================Retrieve all the user information====================\\
-app.get("/users", async (req, res)=>{
-  try {
-    const usersList = await knex("users")
-    .select('*');
-    return res.json(usersList)
-  } catch (error) {
-    res.status(500).send('unable to retrieve admin inventory list')
+  else{
+    try {
+      const usersList = await knex("users")
+      .select('*');
+      return res.json(usersList)
+    } catch (error) {
+      res.status(500).send('unable to retrieve admin users list')
+    }
   }
 })
 
