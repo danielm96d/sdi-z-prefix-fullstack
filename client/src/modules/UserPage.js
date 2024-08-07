@@ -55,7 +55,10 @@ export default function UserPage(){
     <>
       <Menubar model={pages}/>
       <h1>{currentUser}'s Inventory</h1>
-      <DataTable value={invList}>
+      <DataTable value={invList} selectionMode='single' onRowSelect={(event)=>{
+        // console.log('e.target: ', event.data)
+        navigate('/item-details', {state: event.data})
+      }}>
         <Column field='quantity' header='#' style={{width: '75px'}}></Column>
         <Column field='name' header='Item Name'></Column>
         <Column field='description' header='Item Description'></Column>
