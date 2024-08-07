@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { useLocation, useNavigate} from "react-router-dom"
 import {InputText} from 'primereact/inputtext'
 import { FloatLabel } from "primereact/floatlabel";
@@ -8,11 +8,16 @@ import 'primeicons/primeicons.css';
 import '../css/ItemDetails.css'
 import { Menubar } from 'primereact/menubar';
 import { ProgressSpinner } from 'primereact/progressspinner';
+import { Card } from "primereact/card";
+import { Divider } from "primereact/divider";
+import MenuBar from "./MenuBar";
 
 export default function ItemDetails(){
   const location = useLocation()
   const {id} = location.state || {}
   const navigate = useNavigate();
+
+  const [owner, setOwner] = useState(false)
 
   const [item, setItem] = useState(false)
   const [name, setName] = useState(false)
@@ -24,32 +29,6 @@ export default function ItemDetails(){
   const [isEmpty3, setIsEmpty3] = useState(false)
   const [isDisabled, setIsDisabled] = useState(true)
 
-  const pages=[
-    {
-      label: 'Master Inventory',
-      icon: 'pi pi-home',
-      url: '/inventory'
-    },
-    {
-      label: `${localStorage.getItem('user')}'s Inventory`,
-      icon: 'pi pi-user',
-      url: '/user-details'
-    },
-    {
-      icon: 'pi pi-ellipsis-h',
-      items: [
-        {
-          label: 'Logout',
-          command: ()=>{
-            localStorage.setItem('user','');
-            localStorage.setItem('userID','');
-            navigate('/inventory');
-          }
-        }
-      ]
-    }
-  ]
-
   useEffect(()=>{
     fetch(`http://localhost:8080/inventory/?id=${id}`)
     .then(res=>res.json())
@@ -59,6 +38,14 @@ export default function ItemDetails(){
       setName(data[0].name)
       setQuantity(data[0].quantity)
       setDescription(data[0].description)
+      return data[0].userID
+    }).then(userID=>{
+      fetch(`http://localhost:8080/users/?id=${userID}`)
+      .then(res=>res.json())
+      .then(data=>{
+        console.log('owner being set to: ', ...data)
+        setOwner(...data);
+      })
     })
   },[])
 
@@ -67,12 +54,43 @@ export default function ItemDetails(){
     console.log('item loading')
     return <ProgressSpinner />
   }
+  // console.log('userID: ', parseInt(localStorage.getItem('userID')), 'testing agianst: ', item.userID)
+  // This will test if the user is the one who owns the item or not, This will also
+  // satsify the requirement that an unauthenticated user can see all item specifics without being able to
+  // edit them.
+  if(!localStorage.getItem('user')||parseInt(localStorage.getItem('userID'))!== item.userID){
+    return(
+      <div className="card">
+        <MenuBar/>
+        <Card title={name} subTitle={`quantity: ${quantity}`}>
+          <h3>Description:</h3>
+          <Divider/>
+          {item.description}
+        </Card>
+      </div>
+    )
+  }
   return(
     <div className="main">
-      <Menubar model={pages}/>
-      <Button disabled={!isDisabled} icon='pi pi-pen-to-square' severity="success" onClick={()=>{
-        setIsDisabled(false)
-      }}/>
+      <MenuBar/>
+      <div className="ItemActions">
+        <Button disabled={!isDisabled} icon='pi pi-pen-to-square' severity="success" onClick={()=>{
+          setIsDisabled(false)
+        }}/>
+        <Button severity="danger" icon="pi pi-trash"onClick={()=>{
+          const requestOptions = {
+            method: "DELETE"
+          };
+          
+          fetch(`http://localhost:8080/inventory/${id}`, requestOptions)
+            .then((response) => response.text())
+            .then((result) => {
+              console.log(result)
+              navigate('/user-details')
+            })
+            .catch((error) => console.error(error));
+        }}/>
+      </div>
       <FloatLabel>
         <InputText
           id='itemName'
@@ -92,6 +110,7 @@ export default function ItemDetails(){
         <InputText
           id='quantity'
           invalid={isEmpty2}
+          keyfilter='int'
           disabled={isDisabled}
           value={quantity}
           onChange={(e) =>{
@@ -107,8 +126,10 @@ export default function ItemDetails(){
         <InputTextarea
           id='itemDesc'
           disabled={isDisabled}
+          autoResize
           invalid={isEmpty3}
           value={description}
+          style={{height: 'fit-content'}}
           onChange={(e) =>{
             if(e.target.value === ''){
               setIsEmpty3(true);

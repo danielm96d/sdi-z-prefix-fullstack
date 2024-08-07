@@ -7,7 +7,7 @@ exports.up = function(knex) {
     table.increments().primary();
     table.integer("userID").references("id").inTable("users").notNullable();
     table.string("name");
-    table.string("description");
+    table.text("description");
     table.integer("quantity");
   })
 };

@@ -7,11 +7,20 @@
 }
 
 .p-inputtext{
-  height: 50px;
-  width: 500px;
+  width: 552px;
+  height: fit-content;
 }
 
 .p-float-label{
   height:fit-content;
   margin-top: 30px;
+}
+.p-password{
+  width: 100vw;
+}
+.content{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
 }

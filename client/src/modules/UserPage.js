@@ -23,7 +23,12 @@ export default function UserPage(){
   const [description, setDescription] = useState('')
 
   const navigate = useNavigate();
-
+  const descriptionOverflowStyle = {
+    maxWidth: "26.5ch",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    whiteSpace: "nowrap"
+  }
   const pages=[
     {
       label: 'Master Inventory',
@@ -71,7 +76,8 @@ export default function UserPage(){
       }}>
         <Column field='quantity' header='#' style={{width: '75px'}}></Column>
         <Column field='name' header='Item Name'></Column>
-        <Column field='description' header='Item Description'></Column>
+        <Column field='description' header='Item Description' style={descriptionOverflowStyle}></Column>
+        <Column field='delete'></Column>
       </DataTable>
       
       <Button icon='pi pi-plus' onClick={()=>{setIsVisible(true)}}/>
@@ -94,6 +100,7 @@ export default function UserPage(){
         <InputText
           id='quantity'
           invalid={isEmpty2}
+          keyfilter='int'
           value={quantity}
           onChange={(e) =>{
             if(e.target.value === ''){
