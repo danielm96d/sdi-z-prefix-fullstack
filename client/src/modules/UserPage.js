@@ -20,10 +20,11 @@ export default function UserPage(){
   return(
     <>
       <button onClick={()=>{
-          localStorage.setItem('user','');
-          localStorage.setItem('userID','');
-          navigate('/inventory')
-        }}>Logout</button>
+        localStorage.setItem('user','');
+        localStorage.setItem('userID','');
+        navigate('/inventory')
+      }}>Logout</button>
+      <button>Additem</button>
       <button onClick={()=>{navigate("/inventory")}}>inventory</button>
       <h1>{currentUser}'s Inventory</h1>
       {
