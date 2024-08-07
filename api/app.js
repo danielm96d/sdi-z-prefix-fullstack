@@ -62,8 +62,15 @@ app.post("/inventory", async (req, res)=>{
   if(!userID || !name || !description || !quantity)
     res.status(400).send('empty field in post request detected please send an appropriate request')
   try {
-    await knex("items").insert({userID, name, description, quantity})
-    return res.json('item successfuly created')
+    const newItem = await knex("items").insert({userID, name, description, quantity},['id','userID', 'name', 'description', 'quantity'])
+    // const newItem = await knex("items").select('*').where({
+    //   userID: userID,
+    //   name: name,
+    //   description: description,
+    //   quantity: quantity
+    // })
+    res.send(newItem)
+    // return res.json('item successfuly created')
   } catch (error) {
     console.log(error)
     res.status(500).send(error.json())

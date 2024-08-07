@@ -1,5 +1,17 @@
 .p-menubar{
-  position: absolute;
+  /* position: absolute; */
   top: 0;
   width: 100%;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.p-inputtext{
+  height: 50px;
+  width: 500px;
+}
+
+.p-float-label{
+  height:fit-content;
+  margin-top: 30px;
 }

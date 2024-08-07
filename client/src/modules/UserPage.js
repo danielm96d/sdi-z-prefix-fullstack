@@ -2,15 +2,26 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { Menubar } from 'primereact/menubar';
 import { DataTable } from 'primereact/datatable';
+import { Dialog } from 'primereact/dialog';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { Rating } from 'primereact/rating';
-import { Tag } from 'primereact/tag';
+import {InputText} from 'primereact/inputtext'
+import { FloatLabel } from "primereact/floatlabel";
+import { InputTextarea } from 'primereact/inputtextarea';
 
 export default function UserPage(){
   const [currentUser, setCurrentUser] = useState(localStorage.getItem('user'))
   const [currentUserID, setCurrentUserID]= useState(localStorage.getItem('userID'))
+  const [isVisible, setIsVisible] =useState(false)
   const [invList, setInvList] = useState([])
+
+  const [isEmpty1, setIsEmpty1] = useState(true)
+  const [isEmpty2, setIsEmpty2] = useState(true)
+  const [isEmpty3, setIsEmpty3] = useState(true)
+  const [name, setName] = useState('')
+  const [quantity, setQuantity] = useState('')
+  const [description, setDescription] = useState('')
+
   const navigate = useNavigate();
 
   const pages=[
@@ -54,7 +65,6 @@ export default function UserPage(){
   return(
     <>
       <Menubar model={pages}/>
-      <h1>{currentUser}'s Inventory</h1>
       <DataTable value={invList} selectionMode='single' onRowSelect={(event)=>{
         // console.log('e.target: ', event.data)
         navigate('/item-details', {state: event.data})
@@ -63,6 +73,78 @@ export default function UserPage(){
         <Column field='name' header='Item Name'></Column>
         <Column field='description' header='Item Description'></Column>
       </DataTable>
+      
+      <Button icon='pi pi-plus' onClick={()=>{setIsVisible(true)}}/>
+      <Dialog header='ADD ITEM' visible={isVisible} onHide={() => {if (!isVisible) return; setIsVisible(false); }}>
+      <FloatLabel>
+        <InputText
+          id='itemName'
+          invalid={isEmpty1}
+          value={name}
+          onChange={(e) =>{
+            if(e.target.value === ''){
+              setIsEmpty1(true)
+            } else{setIsEmpty1(false)}
+            setName(e.target.value)
+          }
+        }/>
+        <label htmlFor='itemName'>Item Name</label>
+      </FloatLabel>
+      <FloatLabel>
+        <InputText
+          id='quantity'
+          invalid={isEmpty2}
+          value={quantity}
+          onChange={(e) =>{
+            if(e.target.value === ''){
+              setIsEmpty2(true);
+            }else{setIsEmpty2(false)}
+            setQuantity(e.target.value)
+          }
+        }/>
+        <label htmlFor='quantity'>Item Quantity</label>
+      </FloatLabel>
+      <FloatLabel>
+        <InputTextarea
+          id='itemDesc'
+          invalid={isEmpty3}
+          value={description}
+          onChange={(e) =>{
+            if(e.target.value === ''){
+              setIsEmpty3(true);
+            }else{setIsEmpty3(false)}
+            setDescription(e.target.value)
+          }
+        }/>
+        <label htmlFor='itemDesc'>Item Description</label>
+      </FloatLabel>
+      <Button icon='pi pi-check' onClick={()=>{
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        
+        const raw = JSON.stringify({
+          userID: localStorage.getItem('userID'),
+          name: name,
+          description: description,
+          quantity: quantity
+        });
+        
+        const requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          body: raw,
+          redirect: "follow"
+        };
+        
+        fetch(`http://localhost:8080/inventory`, requestOptions)
+          .then((response) => response.json())
+          .then((result) => {
+            console.log(...result);
+            setInvList([...invList, ...result])
+          })
+          .catch((error) => console.error(error));
+      }}/>
+      </Dialog>
     </>
     
   )
