@@ -119,6 +119,9 @@ export default function UserPage(){
         <label htmlFor='itemDesc'>Item Description</label>
       </FloatLabel>
       <Button icon='pi pi-check' onClick={()=>{
+        if(isEmpty1||isEmpty2||isEmpty3){
+          return
+        }
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
         
@@ -141,6 +144,7 @@ export default function UserPage(){
           .then((result) => {
             console.log(...result);
             setInvList([...invList, ...result])
+            setIsVisible(false);
           })
           .catch((error) => console.error(error));
       }}/>
