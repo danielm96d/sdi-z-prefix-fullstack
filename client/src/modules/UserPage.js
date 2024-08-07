@@ -56,7 +56,7 @@ export default function UserPage(){
       <Menubar model={pages}/>
       <h1>{currentUser}'s Inventory</h1>
       <DataTable value={invList}>
-        <Column field='quantity' header='#'></Column>
+        <Column field='quantity' header='#' style={{width: '75px'}}></Column>
         <Column field='name' header='Item Name'></Column>
         <Column field='description' header='Item Description'></Column>
       </DataTable>
