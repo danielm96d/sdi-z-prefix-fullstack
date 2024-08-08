@@ -24,3 +24,9 @@
   align-items: center;
   margin-top: 100px;
 }
+
+.regBtns{
+  display: flex;
+  justify-content: center;
+
+}
