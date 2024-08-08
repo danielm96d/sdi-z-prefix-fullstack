@@ -7,11 +7,12 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { Divider } from "primereact/divider";
 import { Password } from "primereact/password";
+import { useAuth0 } from "@auth0/auth0-react";
 export default function Login(){
   const navigate = useNavigate();
-  const [userName, setUserName] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-
+  const {loginWithRedirect } = useAuth0();
   const [isEmpty1, setIsEmpty1] = useState(false)
   const [isEmpty2, setIsEmpty2] = useState(false)
 
@@ -25,12 +26,12 @@ export default function Login(){
               id='username'
               invalid={isEmpty1}
               style={{width: '100%'}}
-              value={userName}
+              value={username}
               onChange={(e) =>{
                 if(e.target.value === ''){
                   setIsEmpty1(true)
                 } else{setIsEmpty1(false)}
-                setUserName(e.target.value)
+                setUsername(e.target.value)
               }
             }/>
             <label htmlFor='username'>Username</label>
@@ -38,7 +39,7 @@ export default function Login(){
           <FloatLabel>
             <Password
               id='password'
-              invalid={isEmpty1}
+              invalid={isEmpty2}
               style={{width: '100%'}}
               value={password}
               feedback={false}
@@ -53,33 +54,77 @@ export default function Login(){
             <label htmlFor='password'>Password</label>
           </FloatLabel>
           <Divider/>
-          <Button label='Login' onClick={()=>{
-            if(!userName || !password){
-              console.log('empty fields are invalid')
-              return 
-            }
-            try {
-              fetch(`http://localhost:8080/users/?username=${userName}`)
-              .then(res=>res.json())
-              .then(data=>{
-                let userData = data[0];
-                if(password=== userData.password){
-                  console.log(`Successful login as ${userName}`);
-                  localStorage.setItem('user',userName);
-                  localStorage.setItem('userID',userData.id);
-                  navigate('/user-details')
-                }
-                else{
-                  console.log('error incorrect password')
-                }
-              })
-            } catch (error) {
-              console.log('invalid username')
-            }
-          }}/>
-          <Button label='Register' onClick={()=>{
-            navigate('/CreateAccount')
-          }}/>
+          <div className="regBtns">
+            <Button label='Login' onClick={()=>{
+              if(!username || !password){
+                console.log('empty fields are invalid')
+                return 
+              }
+              
+              try {
+                fetch(`http://localhost:8080/users/?username=${username}`)
+                .then(res=>res.json())
+                .then(data=>{
+                  let userData = data[0];
+                  if(password=== userData.password){
+                    console.log(`Successful login as ${username}`);
+                    localStorage.setItem('user',username);
+                    localStorage.setItem('userID',userData.id);
+                    navigate('/user-details')
+                  }
+                  else{
+                    console.log('error incorrect password')
+                  }
+                })
+              } catch (error) {
+                console.log('invalid username')
+              }
+            }}/>
+            <Button label='Register' onClick={()=>{
+              navigate('/CreateAccount')
+            }}/>
+            <Button label='Login encrypted' onClick={()=>{
+              if(!username || !password){
+                console.log('empty fields are invalid')
+                return 
+              }
+
+              const myHeaders = new Headers();
+              myHeaders.append("Content-Type", "application/json");
+
+              const raw = JSON.stringify({ username: username, password: password})
+
+              const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: raw,
+                redirect: "follow"
+              };
+
+              try {
+                fetch(`http://localhost:8080/login`,requestOptions)
+                .then(res=>res.json())
+                .then(data=>{
+                  console.log(data)
+                  let response = data;
+                  if(response.message === 'Login successful'){
+                    console.log(`Successful login as ${username}`);
+                    localStorage.setItem('user',username);
+                    localStorage.setItem('userID',response.id);
+                    navigate('/user-details')
+                  }
+                  else{
+                    console.log('error incorrect password')
+                  }
+                })
+                .catch(err=>{
+                  console.error(err)
+                })
+              } catch (error) {
+                console.log('invalid username')
+              }
+            }}/>
+          </div>
         </Card>
       </div>
     </>

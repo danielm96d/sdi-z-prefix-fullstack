@@ -172,6 +172,34 @@ export default function CreateAccount(){
                 .then((data)=>{navigate('/Login')})
                 .catch((error) => console.error(error));
             }}/>
+            <Divider/>
+            <Button label='encrypted creation' onClick={()=>{
+              if(usernameList.indexOf(userName) !== -1){
+                setIsEmpty3(true)
+                return
+              }
+              const myHeaders = new Headers();
+              myHeaders.append("Content-Type", "application/json");
+              
+              const postData = JSON.stringify({
+                firstName: firstName,
+                lastName: lastName,
+                userName: userName,
+                password: password
+              })
+              const requestOptions = {
+                method: "POST",
+                headers: myHeaders,
+                body: postData,
+                redirect: "follow"
+              };
+              
+              fetch("http://localhost:8080/register", requestOptions)
+                .then((response) => response.text())
+                .then((result) => console.log(result))
+                .then((data)=>{navigate('/Login')})
+                .catch((error) => console.error(error));
+            }}/>
           </div>
         </Card>
       </div>

@@ -1,6 +1,7 @@
 require("dotenv").config({ path: "../.env" });
 const express = require("express");
 const cors = require("cors");
+const bcrypt = require('bcryptjs')
 const app = express();
 // **NOTE: process.env.NODE_ENV is keyed to use compose as opposed to development, may need altering for deployment
 const knex = require("knex")(
@@ -139,7 +140,7 @@ app.get("/users*", async (req, res)=>{
   else if(username){
     try {
       const usersList = await knex("users")
-      .select('*').where({userName: username});
+      .select('*').where({username: username});
       // console.log(usersList)
       if(usersList.length === 0) return res.status(500).json(`no user with username: ${username}`)
       return res.json(usersList)
@@ -165,7 +166,7 @@ app.post("/users", async (req, res)=>{
   if(!userData)
     res.status(400).send('empty post request detected please send an appropriate request')
   try {
-    await knex("users").insert({firstName: userData.firstName, lastName: userData.lastName, userName: userData.userName, password: userData.password})
+    await knex("users").insert({firstname: userData.firstname, lastname: userData.lastname, username: userData.username, password: userData.password})
     return res.json(userData)
   } catch (error) {
     res.status(500).send('unable to retrieve admin inventory list')
@@ -193,16 +194,16 @@ app.delete("/users/:id", async (req, res)=>{
 //==================Update a User====================\\
 app.patch("/users/:id", async (req, res)=>{
   const {id} = req.params
-  const {firstName, lastName, userName, password} = req.body
+  const {firstname, lastname, username, password} = req.body
   if(!id)
     res.status(400).send('empty id field request detected please send an appropriate request')
-  if(!firstName || !lastName || !userName || !password){
+  if(!firstname || !lastname || !username || !password){
     res.status(400).send({ERROR: 'please enter an update for each field'})
   }
   try {
     const updateUser = await knex("users")
       .where({ id: id })
-      .update({firstName, lastName, userName, password})
+      .update({firstname, lastname, username, password})
     if (updateUser === 0) {
       return res.status(404).json({ error: "user not found" });
     } else {
@@ -213,8 +214,52 @@ app.patch("/users/:id", async (req, res)=>{
     res.status(500).send(error.json)
   }
 })
+//==========================================USERS HASHING AND SALTING ===================================\\
+app.post('/register', async(req, res) => {
+  const {firstname, lastname, username, password} = req.body;
+  console.log('username: ', username)
+  const salt = await bcrypt.genSalt(10);
+  console.log('salt: ', salt)
+  const hashedPassword = await bcrypt.hash(password.toString(), 10);
+  console.log('hash: ', hashedPassword)
 
+  const tempObj = { firstname: firstname, lastname: lastname, username: username, password: hashedPassword};
 
+  if(!firstname || !lastname || !username || !password)
+    return res.status(400).json(`Null value in body`)
+  try {
+    await knex("users").insert({firstname: tempObj.firstname, lastname: tempObj.lastname, username: tempObj.username, password: tempObj.password})
+    return res.json(tempObj)
+  } catch (error) {
+    res.status(500).send('unable to retrieve admin inventory list')
+  }
+});
+
+app.post('/login', async (req, res)=>{
+  const {username, password} = req.body;
+  console.log(req.body)
+  console.log('username: ', username)
+  let user = await knex('users')
+    .select('*')
+    .where({username: username});
+
+  user = user[0]
+  console.log(user)
+  if(Object.keys(user).length === 0){
+    res.status(401).json({error: 'Invalid Credentials'})
+    return;
+  }
+
+  const storedHashedPassword = user.password;
+  console.log(storedHashedPassword)
+
+  const isValid = await bcrypt.compare(password.toString(), storedHashedPassword)
+  if(isValid){
+    res.status(200).json({message: 'Login successful', ...user})
+  } else {
+    res.status(401).json({error: 'Invalid credentials'})
+  }
+})
 
 app.listen(PORT, () => {
   console.log(`application running using NODE_ENV: ${process.env.NODE_ENV}`);//this line will need editing for deployment

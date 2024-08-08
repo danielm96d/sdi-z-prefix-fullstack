@@ -5,9 +5,9 @@
 exports.up = function(knex) {
   return knex.schema.createTable("users", (table)=>{
     table.increments().primary();
-    table.string("firstName")
-    table.string("lastName")
-    table.string("userName").notNullable();
+    table.string("firstname")
+    table.string("lastname")
+    table.string("username").notNullable();
     table.string("password") //need to work on encrypting this.
   })
 };

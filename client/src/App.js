@@ -5,6 +5,7 @@ import NotFound from './modules/NotFound.js';
 import ItemDetails from './modules/ItemDetails.js';
 import Inventory from './modules/Inventory.js';
 import UserPage from './modules/UserPage.js';
+import {Auth0Provider} from '@auth0/auth0-react'
 import CreateAccount from './modules/CreateAccount.js';
 
 function App() {
