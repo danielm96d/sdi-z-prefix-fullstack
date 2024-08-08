@@ -1,4 +1,4 @@
-Inventory Management Application: aka the IM BUSY app
+# Inventory Management Application: aka the IM BUSY app
 
 SETUP:
 - make sure to manually setup the database through the terminal if problems arrise on startup
