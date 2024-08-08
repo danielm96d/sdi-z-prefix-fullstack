@@ -59,19 +59,11 @@ app.get("/inventory*", async (req, res)=>{
 //==================Create an ITEM====================\\
 app.post("/inventory", async (req, res)=>{
   const {userID, name, description, quantity} = req.body
-  // console.log(itemData)
   if(!userID || !name || !description || !quantity)
     res.status(400).send('empty field in post request detected please send an appropriate request')
   try {
     const newItem = await knex("items").insert({userID, name, description, quantity},['id','userID', 'name', 'description', 'quantity'])
-    // const newItem = await knex("items").select('*').where({
-    //   userID: userID,
-    //   name: name,
-    //   description: description,
-    //   quantity: quantity
-    // })
     res.send(newItem)
-    // return res.json('item successfuly created')
   } catch (error) {
     console.log(error)
     res.status(500).send(error.json())
@@ -121,7 +113,6 @@ app.patch("/inventory/:id", async (req, res)=>{
 //==========================================USERS CRUD FUNCITONALITY===================================\\
 //==================Retrieve a single users' information====================\\
 app.get("/users*", async (req, res)=>{
-  // const {id} = req.params;
   const {id, username} = req.query
   if((!id && !username) && Object.keys(req.query).length !== 0){
     return res.status(500).json(`invalid request with query key(s): ${Object.keys(req.query)}`)
@@ -130,7 +121,6 @@ app.get("/users*", async (req, res)=>{
     try {
       const usersList = await knex("users")
       .select('*').where({id: id});
-      // console.log(usersList)
       if(usersList.length === 0) return res.status(500).json(`no user under id: ${id}`)
       return res.json(usersList)
     } catch (error) {
@@ -195,15 +185,23 @@ app.delete("/users/:id", async (req, res)=>{
 app.patch("/users/:id", async (req, res)=>{
   const {id} = req.params
   const {firstname, lastname, username, password} = req.body
-  if(!id)
-    res.status(400).send('empty id field request detected please send an appropriate request')
-  if(!firstname || !lastname || !username || !password){
-    res.status(400).send({ERROR: 'please enter an update for each field'})
-  }
+ 
+  if(!id) res.status(400).send('empty id field request detected please send an appropriate request')
+  
+    console.log('username: ', username)
+  const salt = await bcrypt.genSalt(10);
+  console.log('salt: ', salt)
+  const hashedPassword = await bcrypt.hash(password.toString(), 10);
+  console.log('hash: ', hashedPassword)
+
+  const tempObj = { firstname: firstname, lastname: lastname, username: username, password: hashedPassword};
+
+  if(!firstname || !lastname || !username || !password)
+    return res.status(400).json(`Null value in body`)
   try {
     const updateUser = await knex("users")
       .where({ id: id })
-      .update({firstname, lastname, username, password})
+      .update(tempObj)
     if (updateUser === 0) {
       return res.status(404).json({ error: "user not found" });
     } else {
