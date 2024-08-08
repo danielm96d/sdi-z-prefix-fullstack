@@ -1,8 +1,15 @@
 # Inventory Management But Ultra Super Inuitive: aka IM BUSI app
 
-SETUP:
-- make sure to manually setup the database through the terminal if problems arrise on startup
-- be sure to manually load up the test data as well. (knex migrations and seeds)
+FIRST TIME SETUP:
+1. in the root directory run `npm run docker-run`
+2. in a new terminal run `docker exec -it pg-docker bash`
+3. in the resulting terminal run `psql -U postgres`
+4. in the resulting terminal run `CREATE DATABASE db`
+5. in a new terminal run `docker exec -it api sh`
+6. in the resulting terminal run `npm run knex-reload`
+7. navigate to `http://localhost:3000/inventory` to begin using the application
+
+***NOTE*** this extensive setup is due to one of the remaining issues with the program where the docker compose file does not setup the database appropriately; This initial setup is only necessary for the first time, after which you can us `docker compose up` and `docker compose down` to take the image up and down for use.
 
 ## API GUIDE:
   ### **`/inventory`**
