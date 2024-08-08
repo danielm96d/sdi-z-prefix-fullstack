@@ -5,8 +5,7 @@ import { FloatLabel } from "primereact/floatlabel";
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
 import 'primeicons/primeicons.css';
-import '../css/ItemDetails.css'
-import { Menubar } from 'primereact/menubar';
+import '../css/ItemDetails.css';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Card } from "primereact/card";
 import { Divider } from "primereact/divider";
@@ -73,98 +72,100 @@ export default function ItemDetails(){
   return(
     <div className="main">
       <MenuBar/>
-      <div className="ItemActions">
-        <Button disabled={!isDisabled} icon='pi pi-pen-to-square' severity="success" onClick={()=>{
-          setIsDisabled(false)
-        }}/>
-        <Button severity="danger" icon="pi pi-trash"onClick={()=>{
+      <Card>
+        <div className="ItemActions">
+          <Button disabled={!isDisabled} icon='pi pi-pen-to-square' severity="success" onClick={()=>{
+            setIsDisabled(false)
+          }}/>
+          <Button severity="danger" icon="pi pi-trash"onClick={()=>{
+            const requestOptions = {
+              method: "DELETE"
+            };
+            
+            fetch(`http://localhost:8080/inventory/${id}`, requestOptions)
+              .then((response) => response.text())
+              .then((result) => {
+                console.log(result)
+                navigate('/user-details')
+              })
+              .catch((error) => console.error(error));
+          }}/>
+        </div>
+        <FloatLabel>
+          <InputText
+            id='itemName'
+            invalid={isEmpty1}
+            disabled={isDisabled}
+            value={name}
+            onChange={(e) =>{
+              if(e.target.value === ''){
+                setIsEmpty1(true)
+              } else{setIsEmpty1(false)}
+              setName(e.target.value)
+            }
+          }/>
+          <label htmlFor='itemName'>Item Name</label>
+        </FloatLabel>
+        <FloatLabel>
+          <InputText
+            id='quantity'
+            invalid={isEmpty2}
+            keyfilter='int'
+            disabled={isDisabled}
+            value={quantity}
+            onChange={(e) =>{
+              if(e.target.value === ''){
+                setIsEmpty2(true);
+              }else{setIsEmpty2(false)}
+              setQuantity(e.target.value)
+            }
+          }/>
+          <label htmlFor='quantity'>Item Quantity</label>
+        </FloatLabel>
+        <FloatLabel>
+          <InputTextarea
+            id='itemDesc'
+            disabled={isDisabled}
+            autoResize
+            invalid={isEmpty3}
+            value={description}
+            style={{height: 'fit-content'}}
+            onChange={(e) =>{
+              if(e.target.value === ''){
+                setIsEmpty3(true);
+              }else{setIsEmpty3(false)}
+              setDescription(e.target.value)
+            }
+          }/>
+          <label htmlFor='itemDesc'>Item Description</label>
+        </FloatLabel>
+        <Button disabled={isDisabled} label="Submit" icon="pi pi-check" iconPos="right" onClick={()=>{
+          const myHeaders = new Headers();
+          myHeaders.append("Content-Type", "application/json");
+          
+          const raw = JSON.stringify({
+            userID: localStorage.getItem('userID'),
+            name: name,
+            description: description,
+            quantity: quantity
+          });
+          
           const requestOptions = {
-            method: "DELETE"
+            method: "PATCH",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow"
           };
           
-          fetch(`http://localhost:8080/inventory/${id}`, requestOptions)
+          fetch(`http://localhost:8080/inventory/${item.id}`, requestOptions)
             .then((response) => response.text())
             .then((result) => {
               console.log(result)
-              navigate('/user-details')
+              setIsDisabled(true);
             })
             .catch((error) => console.error(error));
         }}/>
-      </div>
-      <FloatLabel>
-        <InputText
-          id='itemName'
-          invalid={isEmpty1}
-          disabled={isDisabled}
-          value={name}
-          onChange={(e) =>{
-            if(e.target.value === ''){
-              setIsEmpty1(true)
-            } else{setIsEmpty1(false)}
-            setName(e.target.value)
-          }
-        }/>
-        <label htmlFor='itemName'>Item Name</label>
-      </FloatLabel>
-      <FloatLabel>
-        <InputText
-          id='quantity'
-          invalid={isEmpty2}
-          keyfilter='int'
-          disabled={isDisabled}
-          value={quantity}
-          onChange={(e) =>{
-            if(e.target.value === ''){
-              setIsEmpty2(true);
-            }else{setIsEmpty2(false)}
-            setQuantity(e.target.value)
-          }
-        }/>
-        <label htmlFor='quantity'>Item Quantity</label>
-      </FloatLabel>
-      <FloatLabel>
-        <InputTextarea
-          id='itemDesc'
-          disabled={isDisabled}
-          autoResize
-          invalid={isEmpty3}
-          value={description}
-          style={{height: 'fit-content'}}
-          onChange={(e) =>{
-            if(e.target.value === ''){
-              setIsEmpty3(true);
-            }else{setIsEmpty3(false)}
-            setDescription(e.target.value)
-          }
-        }/>
-        <label htmlFor='itemDesc'>Item Description</label>
-      </FloatLabel>
-      <Button disabled={isDisabled} label="Submit" icon="pi pi-check" iconPos="right" onClick={()=>{
-        const myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-        
-        const raw = JSON.stringify({
-          userID: localStorage.getItem('userID'),
-          name: name,
-          description: description,
-          quantity: quantity
-        });
-        
-        const requestOptions = {
-          method: "PATCH",
-          headers: myHeaders,
-          body: raw,
-          redirect: "follow"
-        };
-        
-        fetch(`http://localhost:8080/inventory/${item.id}`, requestOptions)
-          .then((response) => response.text())
-          .then((result) => {
-            console.log(result)
-            setIsDisabled(true);
-          })
-          .catch((error) => console.error(error));
-      }}/>
+      </Card>
     </div>
   )
 }
