@@ -60,34 +60,6 @@ export default function Login(){
                 console.log('empty fields are invalid')
                 return 
               }
-              
-              try {
-                fetch(`http://localhost:8080/users/?username=${username}`)
-                .then(res=>res.json())
-                .then(data=>{
-                  let userData = data[0];
-                  if(password=== userData.password){
-                    console.log(`Successful login as ${username}`);
-                    localStorage.setItem('user',username);
-                    localStorage.setItem('userID',userData.id);
-                    navigate('/user-details')
-                  }
-                  else{
-                    console.log('error incorrect password')
-                  }
-                })
-              } catch (error) {
-                console.log('invalid username')
-              }
-            }}/>
-            <Button label='Register' onClick={()=>{
-              navigate('/CreateAccount')
-            }}/>
-            <Button label='Login encrypted' onClick={()=>{
-              if(!username || !password){
-                console.log('empty fields are invalid')
-                return 
-              }
 
               const myHeaders = new Headers();
               myHeaders.append("Content-Type", "application/json");
@@ -105,7 +77,7 @@ export default function Login(){
                 fetch(`http://localhost:8080/login`,requestOptions)
                 .then(res=>res.json())
                 .then(data=>{
-                  console.log(data)
+                  console.log('LOGIN.JS data: ',data)
                   let response = data;
                   if(response.message === 'Login successful'){
                     console.log(`Successful login as ${username}`);
@@ -123,6 +95,9 @@ export default function Login(){
               } catch (error) {
                 console.log('invalid username')
               }
+            }}/>
+            <Button label='Register' onClick={()=>{
+              navigate('/CreateAccount')
             }}/>
           </div>
         </Card>

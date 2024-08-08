@@ -242,9 +242,10 @@ app.post('/login', async (req, res)=>{
   let user = await knex('users')
     .select('*')
     .where({username: username});
-
+    
+  console.log('user: ', user)
   user = user[0]
-  console.log(user)
+  console.log('user: ', user)
   if(Object.keys(user).length === 0){
     res.status(401).json({error: 'Invalid Credentials'})
     return;

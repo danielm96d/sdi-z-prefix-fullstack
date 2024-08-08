@@ -9,11 +9,11 @@ import { Divider } from "primereact/divider";
 import { Password } from "primereact/password";
 
 export default function CreateAccount(){
-  const [userName, setUserName] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [password2, setPassword2] = useState('')
-  const [firstName, setFirstName] = useState('')
-  const [lastName, setLastName] = useState('')
+  const [firstname, setFirstname] = useState('')
+  const [lastname, setLastname] = useState('')
   const [usernameList, setUsernameList] = useState([])
   const navigate = useNavigate();
 
@@ -28,35 +28,25 @@ export default function CreateAccount(){
     fetch(`http://localhost:8080/users`)
     .then(res=>res.json())
     .then(data=>{
-      let userNameArray = []
+      let usernameArray = []
       // console.log(data)
       for(let item of data){
-        userNameArray.push(item.userName)
+        usernameArray.push(item.username)
       }
-      console.log(userNameArray)
-      setUsernameList(userNameArray)
+      console.log(usernameArray)
+      setUsernameList(usernameArray)
     })
     .catch(err=>{
       console.log('error msg: ', err)
     })
   },[])
-
-  useEffect(()=>{
-    // console.log('working')
-    if(password !== password2 || !password || !password2){
-      setIsEmpty5(true)
-      setIsEmpty4(true)
-    } else{
-      setIsEmpty5(false)
-      setIsEmpty4(false)
-    }
-  },[password2])
   
   useEffect(()=>{
     // console.log('working')
-    if(isEmpty1 || isEmpty2 || isEmpty3 || isEmpty4 || isEmpty5 || password !== password2) setDisabled(true)
+    if(isEmpty1 || isEmpty2 || isEmpty3 || isEmpty4 || isEmpty5) setDisabled(true)
     else setDisabled(false)
-  },[password, password2, userName, firstName, lastName])
+  },[password, password2, username, firstname, lastname])
+  
   return(
     <>
       <MenuBar/>
@@ -65,45 +55,45 @@ export default function CreateAccount(){
           <form>
             <FloatLabel>
               <InputText
-                id='firstName'
+                id='firstname'
                 invalid={isEmpty1}
                 style={{width: '100%'}}
-                value={firstName}
+                value={firstname}
                 onChange={(e) =>{
                   if(e.target.value === ''){
                     setIsEmpty1(true)
                   } else{setIsEmpty1(false)}
-                  setFirstName(e.target.value)
+                  setFirstname(e.target.value)
                 }
               }/>
-              <label htmlFor='firstName'>Please Enter First Name:</label>
+              <label htmlFor='firstname'>Please Enter First Name:</label>
             </FloatLabel>
             <FloatLabel>
               <InputText
-                id='lastName'
+                id='lastname'
                 invalid={isEmpty2}
                 style={{width: '100%'}}
-                value={lastName}
+                value={lastname}
                 onChange={(e) =>{
                   if(e.target.value === ''){
                     setIsEmpty2(true)
                   } else{setIsEmpty2(false)}
-                  setLastName(e.target.value)
+                  setLastname(e.target.value)
                 }
               }/>
-              <label htmlFor='lastName'>Please Enter Last Name:</label>
+              <label htmlFor='lastname'>Please Enter Last Name:</label>
             </FloatLabel>
             <FloatLabel>
               <InputText
                 id='username'
                 invalid={isEmpty3}
                 style={{width: '100%'}}
-                value={userName}
+                value={username}
                 onChange={(e) =>{
                   if(e.target.value === ''){
                     setIsEmpty3(true)
                   } else{setIsEmpty3(false)}
-                  setUserName(e.target.value)
+                  setUsername(e.target.value)
                 }
               }/>
               <label htmlFor='username'>Please Enter a Username:</label>
@@ -145,8 +135,8 @@ export default function CreateAccount(){
           </form>
           <Divider/>
           <div className="regBtns">
-            <Button label='Login' disabled={disabled} onClick={()=>{
-              if(usernameList.indexOf(userName) !== -1){
+            {/* <Button label='Login' disabled={disabled} onClick={()=>{
+              if(usernameList.indexOf(username) !== -1){
                 setIsEmpty3(true)
                 return
               }
@@ -154,9 +144,9 @@ export default function CreateAccount(){
               myHeaders.append("Content-Type", "application/json");
               
               const postData = JSON.stringify({
-                firstName: firstName,
-                lastName: lastName,
-                userName: userName,
+                firstname: firstname,
+                lastname: lastname,
+                username: username,
                 password: password
               })
               const requestOptions = {
@@ -172,19 +162,24 @@ export default function CreateAccount(){
                 .then((data)=>{navigate('/Login')})
                 .catch((error) => console.error(error));
             }}/>
-            <Divider/>
-            <Button label='encrypted creation' onClick={()=>{
-              if(usernameList.indexOf(userName) !== -1){
+            <Divider/> */}
+            <Button label='encrypted creation' disabled={disabled} onClick={()=>{
+              if(usernameList.indexOf(username) !== -1){
                 setIsEmpty3(true)
+                return
+              }
+              if(password !== password2){
+                setIsEmpty5(true);
+                console.error('Passwords do not match')
                 return
               }
               const myHeaders = new Headers();
               myHeaders.append("Content-Type", "application/json");
               
               const postData = JSON.stringify({
-                firstName: firstName,
-                lastName: lastName,
-                userName: userName,
+                firstname: firstname,
+                lastname: lastname,
+                username: username,
                 password: password
               })
               const requestOptions = {
